@@ -4,14 +4,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/joho/godotenv"
+
+	api "weather-api/server/pkg/weather-api-client"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(os.Getenv("SECRET"))
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+	weather := api.GetWeather(r.URL.Path[1:])
+
+	fmt.Fprint(w, string(weather))
 }
 
 func main() {
