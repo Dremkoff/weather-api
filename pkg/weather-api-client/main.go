@@ -1,7 +1,6 @@
 package weatherapiclient
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -34,6 +33,6 @@ func GetWeather(location string) []byte {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(string(body))
+
 	return body
 }
