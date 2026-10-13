@@ -38,18 +38,25 @@ func handler(cache *redisClient.Client) http.HandlerFunc {
 	}
 }
 
+func healthCheck(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
+}
+
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if err := godotenv.Load(); err != nil {
+		if !os.IsNotExist(err) {
+			log.Printf("Warning: could not load .env: %v", err)
+		}
 	}
 
-	redis, err := redisClient.New(os.Getenv("ADDRESS"))
+	redis, err := redisClient.New(os.Getenv("REDIS_ADDR"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer redis.Close()
 
 	http.HandleFunc("/", handler(redis))
+	http.HandleFunc("/health", healthCheck)
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
